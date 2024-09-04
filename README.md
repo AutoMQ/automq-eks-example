@@ -1,2 +1,4 @@
-# automq-eks-example
-Offering users a completely free trial of AutoMQ Enterprise Edition. Use Terraform to automatically prepare the AutoMQ environment in a few minutes. There's no need to provide your own AWS account or purchase cloud resources.
+# Learn Terraform - Provision an EKS Cluster
+
+This repo is a companion repo to the [Provision an EKS Cluster tutorial](https://developer.hashicorp.com/terraform/tutorials/kubernetes/eks), containing
+Terraform configuration files to provision an EKS cluster on AWS.
