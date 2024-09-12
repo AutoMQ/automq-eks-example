@@ -10,6 +10,7 @@ extraConfig: |
   s3.wal.buckets=0@s3://automqs3walbucket?region=us-east-1&endpoint=https://s3.amazonaws.com
   s3.wal.iops=2800
   s3.stream.allocator.policy=POOLED_DIRECT
+  s3.telemetry.metrics.exporter.uri=rw://?endpoint=https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-56bdcaca-e9e5-468e-8ef2-637ee9c1ec52/api/v1/remote_write&auth=sigv4&region=us-east-1
   super.users=User:admin
   metric.reporters=com.automq.enterprise.kafka.autobalancer.metricsreporter.AutoBalancerMetricsReporter
   autobalancer.reporter.network.in.capacity=104857600

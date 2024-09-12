@@ -132,14 +132,6 @@ module "irsa-ebs-csi" {
 }
 
 
-module "key_pair" {
-  source = "terraform-aws-modules/key-pair/aws"
-
-  key_name   = "automq-client-key"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDJKTK8LOXORLTws4m4uY3qYRs667RDtl+N4zTr3Q92Du3OHQ9XVgBOlcUqxOoyUpdDuFBQxXN0umZgtPr3nzK4I1/MTFiRkXJkq6plOXcHC3QzCIoaXAI9kyzt9DBCaDQFTIR6wpLXuMnqtZdCAzPRpji0jjaFcbLZgSVnPnzrHj7tZlxqqglgJegeb7t1K5288aMRDWPFGptdCAyfi4ci8D/czG6PAXYY2N+Oqj+gXxfxEX0bc61bEV0ED16V6ZeyfDg78FPVY/MjAtqWAgVgMNzaxYjSdqWkQg71dPdvjvI9ha2TuYEBHdANZr/5HkF0z7ikMUg8CDD6RaLmqmXEAvHvrHy91f6LICbwxO5SL9KTXxq5A4N2CJIy7uoFSN8YlgZzVRemC8NcSMYKXpQxL5ExuIEV+RJ95u/dUZdatJTY5I1qURHhexbz+88g0FLKmEp+PO+2FrJ9dkKjQthpU6hXUWb28G+UhlNTrWfBMCl8caV8RyW5sAJHol/k8FE= kamiwan@iMac-Pro.local"
-}
-
-
 data "aws_ami" "latest_amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -189,6 +181,7 @@ resource "aws_iam_policy" "automq_policy" {
           "s3:PutObject",
           "s3:DeleteObject",
           "s3:AbortMultipartUpload",
+          "aps:RemoteWrite",
         ]
         Effect = "Allow"
         Resource = [
@@ -198,6 +191,7 @@ resource "aws_iam_policy" "automq_policy" {
           "arn:aws:s3:::${aws_s3_bucket.automqs3opsbucket.id}/*",
           "arn:aws:s3:::${aws_s3_bucket.automqs3walbucket.id}",
           "arn:aws:s3:::${aws_s3_bucket.automqs3walbucket.id}/*",
+          module.prometheus.workspace_arn,
         ]
       }
 
@@ -242,19 +236,13 @@ resource "aws_s3_bucket" "automqs3walbucket" {
 }
 
 
+module "prometheus" {
+  source = "terraform-aws-modules/managed-service-prometheus/aws"
 
-
-output "automq_s3_data_bucket_url" {
-  description = "The URL of the AutoMQ S3 data bucket"
-  value = "s3.data.buckets=0@s3://${aws_s3_bucket.automqs3databucket.bucket}?region=${var.region}&endpoint=https://s3.amazonaws.com"
+  workspace_alias = "automq_prometheus"
 }
 
-output "automq_s3_ops_bucket_url" {
-  description = "The URL of the AutoMQ S3 ops bucket"
-  value = "s3.ops.buckets=0@s3://${aws_s3_bucket.automqs3opsbucket.bucket}?region=${var.region}&endpoint=https://s3.amazonaws.com"
-}
 
-output "automq_s3_wal_bucket_url" {
-  description = "The URL of the AutoMQ S3 wal bucket"
-  value = "s3.wal.buckets=0@s3://${aws_s3_bucket.automqs3walbucket.bucket}?region=${var.region}&endpoint=https://s3.amazonaws.com"
-}
+
+
+
