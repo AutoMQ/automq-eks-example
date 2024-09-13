@@ -109,7 +109,6 @@ module "eks" {
       min_size     = 5
       max_size     = 10
       desired_size = 5
-      key_name = "automq-client-key"
     }
   }
 }
@@ -142,31 +141,6 @@ data "aws_ami" "latest_amazon_linux" {
   }
 }
 
-
-module "automq-client" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
-
-  ami = data.aws_ami.latest_amazon_linux.id
-  name = "single-instance"
-
-  instance_type          = "r6in.xlarge"
-  key_name               = "automq-client-key"
-  monitoring             = true
-  vpc_security_group_ids = [aws_security_group.allow_all.id]
-  subnet_id              = module.vpc.public_subnets[0]
-  associate_public_ip_address = true
-
-
-  tags = {
-    Terraform   = "true"
-    Environment = "dev"
-  }
-}
-
-output "public_ip" {
-  description = "The public IP of the EC2 instance"
-  value       = module.automq-client.public_ip
-}
 
 resource "aws_iam_policy" "automq_policy" {
   name = "automq_policy"

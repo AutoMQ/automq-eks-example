@@ -46,3 +46,5 @@ output "automq_prometheus_server_url" {
   value = "${module.prometheus.workspace_prometheus_endpoint}"
 }
 
+
+
